@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME</title>
+    
+    <!-- Bootstrap 4 CSS -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+        {% include 'navbar.html' %}
+        <div class="sub-navbar">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">TECHNOLOGY</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">STEAM</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">BLOCK CHAIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">AI</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">TRENDING</a>
+                </li>
+            </ul>
+        </div>
+
+        {% include 'product.html' %}
+
+    
+
+
+
+    <!-- Bootstrap 4 JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
