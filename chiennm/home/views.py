@@ -1,14 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Comment
 from .forms import CommentForm
-
-
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import messages
 
 def home(request):
     posts = Post.objects.all().order_by('-created_at')  # Lấy bài viết mới nhất
     return render(request, 'index.html', {'posts': posts})
-
-
 
 def product_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -24,4 +23,36 @@ def product_detail(request, post_id):
     else:
         form = CommentForm()
     return render(request, 'product_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        # Tạo form với dữ liệu từ request
+        form = UserCreationForm(request.POST)
+        # Kiểm tra tính hợp lệ của form
+        if form.is_valid(): 
+            user = form.save()  # Lưu thông tin người dùng vào cơ sở dữ liệu
+            login(request, user)
+            # Thêm thông báo thành công
+            messages.success(request, 'Đăng ký thành công! Chào mừng bạn đến với trang webhfgfghfhg.')
+            return redirect('home')     # Chuyển hướng người dùng về trang chủ
+    else:
+        form = UserCreationForm()
+    # Render template `register.html` với form
+    return render(request, 'register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)  # Tạo form với dữ liệu từ request
+        if form.is_valid():  # Kiểm tra tính hợp lệ của form
+            user = form.get_user()  # Lấy thông tin người dùng từ form
+            login(request, user) 
+            messages.success(request, 'Đăng nhập thành công! Chào mừng bạn quay lại.')  # Thêm thông báo thành công
+            return redirect('home')  # Chuyển hướng người dùng về trang chủ
+    else: 
+        form = AuthenticationForm()  # Tạo một form trống để hiển thị
+    return render(request, 'login.html', {'form': form})  # Render template `login.html` với form
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')  # Chuyển hướng về trang chủ sau khi đăng xuất
 
