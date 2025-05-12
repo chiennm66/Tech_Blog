@@ -4,6 +4,7 @@ from .forms import CommentForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from django.http import JsonResponse
 
 def home(request):
     posts = Post.objects.all().order_by('-created_at')  # Lấy bài viết mới nhất
@@ -55,4 +56,12 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')  # Chuyển hướng về trang chủ sau khi đăng xuất
+
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.likes += 1
+    post.save()
+    if request.is_ajax():  # Kiểm tra nếu là yêu cầu AJAX
+        return JsonResponse({'likes': post.likes})  # Trả về số lượng like
+    return redirect('product_detail', post_id=post.id)
 

@@ -24,6 +24,12 @@
         <p class="tags mt-3"><strong>Tags:</strong> {{ post.tags }}</p>
         <a href="/" class="btn btn-secondary mt-3">Quay lại</a>
 
+        <div class="like-section mt-3">
+            <button id="like-btn" class="btn btn-outline-danger">
+            <span id="like-count">{{ post.likes }}</span>👍
+            </button>
+        </div>
+
         <hr>
         <h3>Bình luận</h3>
         <div class="comments">
@@ -50,5 +56,30 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('like-btn').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch("{% url 'like_post' post.id %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', // Gửi CSRF token để bảo mật
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Chuyển đổi phản hồi thành JSON
+            })
+            .then(data => {
+                // Cập nhật số lượng like trên giao diện
+                document.getElementById('like-count').innerText = data.likes;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    </script>
 </body>
 </html>
