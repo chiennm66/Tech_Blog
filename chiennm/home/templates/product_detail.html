@@ -50,6 +50,18 @@
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Gửi</button>
         </form>
+
+        <hr>
+        <h4>Bài viết liên quan</h4>
+        <ul>
+            {% for related in related_posts %}
+                <li>
+                    <a href="{% url 'product_detail' related.id %}">{{ related.title }}</a>
+                </li>
+            {% empty %}
+                <li>Không có bài viết liên quan.</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <!-- Bootstrap 4 JS and dependencies -->

@@ -19,7 +19,16 @@ def home(request):
 
 def product_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    comments = post.comments.all()  # Lấy tất cả bình luận của bài viết
+    comments = post.comments.all()
+    # Tách tags thành list
+    tag_list = [tag.strip() for tag in post.tags.split(',')] if post.tags else []
+    # Lấy các bài viết liên quan dựa vào tag (dạng chuỗi), loại trừ chính nó
+    related_posts = Post.objects.none()
+    if tag_list:
+        query = Q()
+        for tag in tag_list:
+            query |= Q(tags__icontains=tag)
+        related_posts = Post.objects.filter(query).exclude(id=post.id).distinct()[:5]
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -30,7 +39,12 @@ def product_detail(request, post_id):
             return redirect('product_detail', post_id=post.id)
     else:
         form = CommentForm()
-    return render(request, 'product_detail.html', {'post': post, 'comments': comments, 'form': form})
+    return render(request, 'product_detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form,
+        'related_posts': related_posts
+    })
 
 def register(request):
     if request.method == 'POST':
