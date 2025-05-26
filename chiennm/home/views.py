@@ -5,10 +5,17 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse
+from django.db.models import Q
 
 def home(request):
-    posts = Post.objects.all().order_by('-created_at')  # Lấy bài viết mới nhất
-    return render(request, 'index.html', {'posts': posts})
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        ).order_by('-created_at')
+    else:
+        posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'index.html', {'posts': posts, 'query': query})
 
 def product_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
