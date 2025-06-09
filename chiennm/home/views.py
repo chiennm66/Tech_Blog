@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Comment
-from .forms import CommentForm
+from .models import Post, Comment, Profile
+from .forms import CommentForm, ProfileForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     query = request.GET.get('q')
@@ -85,4 +86,18 @@ def like_post(request, post_id):
     if request.is_ajax():  # Kiểm tra nếu là yêu cầu AJAX
         return JsonResponse({'likes': post.likes})  # Trả về số lượng like
     return redirect('product_detail', post_id=post.id)
+
+@login_required
+def update_profile(request):
+    # Tạo profile nếu chưa có
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cập nhật thành công!')
+            return redirect('update_profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'update_profile.html', {'form': form})
 
